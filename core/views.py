@@ -15,7 +15,10 @@ def user_login(request):
             user = authenticate(request, username=username, password=password)
             if user is not None:
                 login(request, user)
-                return redirect("home")  # Redirect to the user dashboard
+                if user.groups.filter(name='user').exists():
+                    return redirect("dashboard")  # Redirect to the admin dashboard
+                else:
+                    return redirect("home")  # Redirect to the user home
         else:
             # Form is invalid, show errors
             return render(request, "core/login.html", {"form": form})
@@ -37,3 +40,7 @@ def register_user(request):
     else:
         form = UserRegistrationForm()
     return render(request, "core/register.html", {"form": form})
+
+
+def dashboard_view(request):
+    return render(request, 'homepage/dashboard.html')
