@@ -9,4 +9,5 @@ urlpatterns = [
     path("admin-dashboard/", views.admin_dashboard_view, name="admin_dashboard"), 
     path("user-dashboard/", views.user_dashboard_view, name="user_dashboard"), 
     path("admin-users/", views.admin_users, name="admin_users"), 
+    path("admin-settings/", views.admin_settings, name="admin_settings"), 
 ]

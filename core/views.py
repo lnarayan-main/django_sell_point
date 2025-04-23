@@ -68,8 +68,13 @@ def user_dashboard_view(request):
 @login_required
 @user_passes_test(is_admin)
 def admin_users(request):
-    # Get all users from the database
-    users = User.objects.all()
-    # Render the 'user.dashboard' template and pass the list of users
+    # users = User.objects.all()
+    users = User.objects.exclude(groups__name='admin')
     return render(request, 'homepage/admin/users-listing.html', {'users': users})
+
+@login_required
+@user_passes_test(is_admin)
+def admin_settings(request):
+    users = User.objects.exclude(groups__name='user')
+    return render(request, 'homepage/admin/settings.html', {'users': users})
 
