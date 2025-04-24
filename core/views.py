@@ -1,13 +1,12 @@
-from django.shortcuts import render
-
-# Create your views here.
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
+from django.http import JsonResponse
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import login, authenticate
 from .forms import UserRegistrationForm
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.models import Group
 from django.contrib.auth.models import User
+from django.db.models import Q
 
 
 def user_login(request):
@@ -69,7 +68,17 @@ def user_dashboard_view(request):
 @user_passes_test(is_admin)
 def admin_users(request):
     # users = User.objects.all()
-    users = User.objects.exclude(groups__name='admin')
+    query = request.GET.get('q')  # Get the search query from the request
+    if query:
+        query = query.strip()
+        users = User.objects.filter(
+            Q(username__icontains=query) |
+            Q(first_name__icontains=query) |
+            Q(last_name__icontains=query) |
+            Q(email__icontains=query)
+        ).exclude(groups__name='admin')
+    else:
+        users = User.objects.exclude(groups__name='admin')
     return render(request, 'homepage/admin/users-listing.html', {'users': users})
 
 @login_required
@@ -77,4 +86,22 @@ def admin_users(request):
 def admin_settings(request):
     users = User.objects.exclude(groups__name='user')
     return render(request, 'homepage/admin/settings.html', {'users': users})
+
+@login_required
+@user_passes_test(is_admin)
+def toggle_user_status(request, user_id):
+    if request.method == 'POST':
+        user = get_object_or_404(User, pk=user_id)
+        user.is_active = not user.is_active
+        user.save()
+        return JsonResponse({'status': 'success', 'new_status': user.is_active})
+    else:
+        return JsonResponse({'status': 'error', 'message': 'Invalid request method.'}, status=400)
+    
+
+@login_required
+@user_passes_test(is_admin)
+def admin_categories(request):
+    users = User.objects.exclude(groups__name='admin')
+    return render(request, 'homepage/admin/categories-listing.html', {'users': users})
 

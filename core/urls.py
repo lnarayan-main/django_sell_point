@@ -10,4 +10,6 @@ urlpatterns = [
     path("user-dashboard/", views.user_dashboard_view, name="user_dashboard"), 
     path("admin-users/", views.admin_users, name="admin_users"), 
     path("admin-settings/", views.admin_settings, name="admin_settings"), 
+    path('toggle_user_status/<int:user_id>/', views.toggle_user_status, name='toggle_user_status'),
+    path("admin-categories/", views.admin_categories, name="admin_categories"), 
 ]
