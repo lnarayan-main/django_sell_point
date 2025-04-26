@@ -7,6 +7,10 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.models import Group
 from django.contrib.auth.models import User
 from django.db.models import Q
+from homepage.forms import CategoryForm
+from homepage.models import Category
+from django.urls import reverse
+from django.contrib import messages
 
 
 def user_login(request):
@@ -102,6 +106,54 @@ def toggle_user_status(request, user_id):
 @login_required
 @user_passes_test(is_admin)
 def admin_categories(request):
-    users = User.objects.exclude(groups__name='admin')
-    return render(request, 'homepage/admin/categories-listing.html', {'users': users})
+    categories = Category.objects.all().order_by('-created_at')  # Fetch all categories from the database
+    context = {
+        'categories': categories,
+    }
+    return render(request, 'homepage/admin/categories-listing.html', context)
+
+
+@login_required
+@user_passes_test(is_admin)
+def add_category(request):
+    form = CategoryForm()
+    context = {'form': form}
+    return render(request, 'homepage/admin/categories-add.html', context)
+
+@login_required
+@user_passes_test(is_admin)
+def store_category(request):
+    if request.method == 'POST':
+        form = CategoryForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Category created successfully!')
+            return redirect(reverse('admin_categories'))  # Redirect to the category list view
+        else:
+            messages.error(request, 'There was an error creating the category. Please correct the form.')
+            context = {'form': form}
+            return render(request, 'homepage/admin/categories-add.html', context)
+    else:
+        # If someone tries to access the store URL with a GET request
+        return redirect(reverse('add_category'))
+    
+@login_required
+@user_passes_test(is_admin)
+def edit_category(request, pk):
+    category = get_object_or_404(Category, pk=pk)  # Get the category or return a 404 error
+    if request.method == 'POST':
+        form = CategoryForm(request.POST, instance=category)  # Populate the form with existing category data
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Category updated successfully!')
+            return redirect(reverse('admin_categories'))  # Redirect to the category list view
+        else:
+            messages.error(request, 'There was an error updating the category. Please correct the form.')
+    else:
+        form = CategoryForm(instance=category)  # Populate the form with existing category data
+    context = {
+        'form': form,
+        'category': category,  # Pass the category object to the template
+    }
+    return render(request, 'homepage/admin/categories-edit.html', context)
 
