@@ -15,4 +15,5 @@ urlpatterns = [
     path("add-category/", views.add_category, name="add_category"), 
     path("store-category/", views.store_category, name="store_category"), 
     path('category/edit/<int:pk>/', views.edit_category, name='edit_category'),
+    path('toggle_category_status/<int:category_id>/', views.toggle_category_status, name='toggle_category_status'),
 ]

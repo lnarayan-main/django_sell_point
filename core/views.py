@@ -193,3 +193,14 @@ def edit_category(request, pk):
     }
     return render(request, 'homepage/admin/categories-edit.html', context)
 
+
+@login_required
+@user_passes_test(is_admin)
+def toggle_category_status(request, category_id):
+    if request.method == 'POST':
+        category = get_object_or_404(Category, pk=category_id)
+        category.status = not category.status
+        category.save()
+        return JsonResponse({'status': 'success', 'new_status': category.status})
+    else:
+        return JsonResponse({'status': 'error', 'message': 'Invalid request method.'}, status=400)

@@ -77,7 +77,17 @@
                       Top-Level
                   {% endif %}
               </td>
-              <td>{% if category.status %}Active{% else %}Inactive{% endif %}</td>
+              <td>
+                <div class="form-check form-switch">
+                  <input 
+                      class="form-check-input toggle-status-button"
+                      type="checkbox" 
+                      id="flexSwitchCheckChecked-{{ category.id }}" 
+                      data-category-id="{{ category.id }}"
+                      {% if category.status %}checked{% endif %}>
+                  <label class="form-check-label" for="flexSwitchCheckChecked-{{ category.id }}"></label> {# Corrected for attribute #}
+              </div>
+              </td>
               <!-- <td>{{ category.created_at }}</td>
               <td>{{ category.updated_at }}</td> -->
               <td>
@@ -176,12 +186,12 @@
 
     $(document).ready(function() {
         $('.toggle-status-button').click(function() {
-            const userId = $(this).data('user-id');
+            const categoryId = $(this).data('category-id');
             const button = $(this);
-            const statusCellId = '#status-' + userId; // Unique ID for status cell
+            const statusCellId = '#status-' + categoryId; // Unique ID for status cell
 
             sendAjaxRequest(
-                '/core/toggle_user_status/' + userId + '/',
+                '/core/toggle_category_status/' + categoryId + '/',
                 'POST',
                 { csrfmiddlewaretoken: '{{ csrf_token }}' },
                 function(response) { // Success Callback
@@ -189,7 +199,7 @@
                         const newStatusText = response.new_status ? 'Active' : 'Inactive';
                         $(statusCellId).text(newStatusText); // Update the status text
                         button.text(response.new_status ? 'Disable' : 'Enable'); // Update button text
-                        showToast('User status updated successfully!', 'success');
+                        showToast('Category status updated successfully!', 'success');
                     } else {
                         showToast('Error: ' + response.message, 'error');
                     }
