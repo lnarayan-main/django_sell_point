@@ -7,6 +7,7 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.models import Group
 from django.contrib.auth.models import User
 from django.db.models import Q
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from homepage.forms import CategoryForm
 from homepage.models import Category
 from django.urls import reverse
@@ -83,7 +84,23 @@ def admin_users(request):
         ).exclude(groups__name='admin')
     else:
         users = User.objects.exclude(groups__name='admin')
-    return render(request, 'homepage/admin/users-listing.html', {'users': users})
+
+    paginator = Paginator(users, 10)  # Show 10 categories per page
+    page = request.GET.get('page')
+
+    try:
+        users = paginator.page(page)
+    except PageNotAnInteger:
+        users = paginator.page(1)
+    except EmptyPage:
+        users = paginator.page(paginator.num_pages)
+
+    context = {
+        'users': users,
+        'search_query': query,
+    }
+
+    return render(request, 'homepage/admin/users-listing.html', context)
 
 @login_required
 @user_passes_test(is_admin)
@@ -106,9 +123,28 @@ def toggle_user_status(request, user_id):
 @login_required
 @user_passes_test(is_admin)
 def admin_categories(request):
-    categories = Category.objects.all().order_by('-created_at')  # Fetch all categories from the database
+    query = request.GET.get('q')
+    categories_list = Category.objects.all().order_by('-created_at')
+
+    if query:
+        query = query.strip()
+        categories_list = Category.objects.filter(
+            Q(name__icontains=query)
+        ).order_by('-created_at')
+
+    paginator = Paginator(categories_list, 10)  # Show 10 categories per page
+    page = request.GET.get('page')
+
+    try:
+        categories = paginator.page(page)
+    except PageNotAnInteger:
+        categories = paginator.page(1)
+    except EmptyPage:
+        categories = paginator.page(paginator.num_pages)
+
     context = {
         'categories': categories,
+        'search_query': query,
     }
     return render(request, 'homepage/admin/categories-listing.html', context)
 
