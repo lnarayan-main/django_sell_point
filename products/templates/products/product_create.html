@@ -1,7 +1,18 @@
 {% extends 'base.html' %}
+{% load widget_tweaks %}
 {% load static %}
 
 {% block title %}Welcome to My Awesome Site!{% endblock %}
+
+
+{% block extra_head %}
+
+<style>
+    .error{
+        color: red;
+    }
+</style>
+{% endblock %}
 
 {% block content %}
     <!-- Hero Section Begin -->
@@ -14,38 +25,200 @@
                             <h3>Create Product</h3>
                             <a href="javascript:history.back()" class="btn btn-dark">Back</a>
                     </div>
-                    <form action="{% url 'product_create' %}" method="POST" enctype="multipart/form-data">
+                    
+
+                    <form id="product-form" method="post" action="" enctype="multipart/form-data">
                         {% csrf_token %}
-                        <div class="row">
-                            <div class="col-lg-6 col-md-6">
-                                <input type="text" placeholder="Title" id="title" name="title">
+                        {{ product_form.media }}  {#  Include CSS/JS for widgets #}
+                        <div id="form-errors" class="alert alert-danger" style="display:none;"></div> <div class="row">
+                            <div class="col-lg-6 col-md-6 form-group">
+                                <label for="{{ product_form.title.id_for_label }}">{{ product_form.title.label }}</label>
+                                {{ product_form.title }}
+                                {% if product_form.title.errors %}
+                                    <div class="text-danger">
+                                        {{ product_form.title.errors.as_text }}
+                                    </div>
+                                {% endif %}
                             </div>
-                            <div class="col-lg-6 col-md-6">
-                                <input type="text" placeholder="Description" id="description" name="description">
-                            </div>
-                            <div class="col-lg-6 col-md-6">
-                                <input type="text" placeholder="Price" id="price" name="price">
-                            </div>
-                            <div class="col-lg-6 col-md-6">
-                                <select class="" name="category" id="category">
-                                  <option value="">Select Category</option>
-                                </select>
-                            </div>
-                            <div class="col-lg-6 col-md-6">
-                                <input type="tel" placeholder="Phone Number" id="phone_number" name="phone_number">
-                            </div>
-                            <div class="col-lg-6 col-md-6">
-                                <input type="file" placeholder="Profile Pic" id="profile_pic" name="profile_pic">
-                            </div>
-                            <div class="col-lg-12 text-center">
-                                <button type="submit" class="site-btn">Submit</button>
+                            <div class="col-lg-6 col-md-6 form-group">
+                                <label for="{{ product_form.description.id_for_label }}">{{ product_form.description.label }}</label>
+                                {{ product_form.description }}
+                                 {% if product_form.description.errors %}
+                                    <div class="text-danger">
+                                        {{ product_form.description.errors.as_text }}
+                                    </div>
+                                {% endif %}
                             </div>
                         </div>
+                        <div class="row">
+                            <div class="col-lg-6 col-md-6 form-group">
+                                <label for="{{ product_form.price.id_for_label }}">{{ product_form.price.label }}</label>
+                                {{ product_form.price }}
+                                 {% if product_form.price.errors %}
+                                    <div class="text-danger">
+                                        {{ product_form.price.errors.as_text }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div class="col-lg-6 col-md-6 form-group">
+                                <label for="{{ product_form.quantity.id_for_label }}">{{ product_form.quantity.label }}</label>
+                                {{ product_form.quantity }}
+                                 {% if product_form.quantity.errors %}
+                                    <div class="text-danger">
+                                        {{ product_form.quantity.errors.as_text }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-6 col-md-6 form-group">
+                                <label for="{{ product_form.category.id_for_label }}">{{ product_form.category.label }}</label>
+                                {{ product_form.category }}
+                                 {% if product_form.category.errors %}
+                                    <div class="text-danger">
+                                        {{ product_form.category.errors.as_text }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div class="col-lg-6 col-md-6 form-group">
+                                <label for="{{ product_form.status.id_for_label }}">{{ product_form.status.label }}</label>
+                                {{ product_form.status }}
+                                 {% if product_form.status.errors %}
+                                    <div class="text-danger">
+                                        {{ product_form.status.errors.as_text }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                
+                
+                        <h3>Product Images</h3>
+                        <div class="row">
+                        {{ image_formset.management_form }}  {#  Management form is required for formsets #}
+                        {% for form in image_formset %}
+                            <div class="col-md-4 form-group">
+                                <label for="{{ form.image.id_for_label }}">Image</label>
+                                {{ form.image }}
+                                {% if form.image.errors %}
+                                    <div class="text-danger">
+                                        {{ form.image.errors.as_text }}
+                                    </div>
+                                {% endif %}
+                                {{ form.DELETE.label_tag }}
+                                {{ form.DELETE }}
+                            </div>
+                            <!-- {% if form.instance.image %}
+                            <div class="mt-2">
+                                <img src="{{ form.instance.image.url }}" alt="Product Image" style="width:80px; height:80px; object-fit:cover; border:1px solid #ddd; border-radius:4px;">
+                            </div>
+                            {% endif %} -->
+                        {% endfor %}
+                        </div>
+                
+                        <button type="submit" class="btn btn-primary">{% if action == 'Create' %}Create{% else %}Update{% endif %} Product</button>
                     </form>
+                
+                
+                
+                
                 </div>
             </div>
             </div>
         </div>
     </section>
     <!-- Hero Section End -->
+    {% endblock %}
+
+    {% block extra_scripts %}
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.3/dist/jquery.validate.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $("#product-form").validate({
+                rules: {
+                    'title': {
+                        required: true,
+                        maxlength: 255
+                    },
+                    'description': {
+                        required: true,
+                        maxlength: 1000
+                    },
+                    'price': {
+                        required: true,
+                        number: true,
+                        min: 0
+                    },
+                    'quantity': {
+                        required: true,
+                        number: true,
+                        min:1,  
+                    },
+                    'category': {
+                        required: true,
+                    },
+                    'status': {
+                        required: true,
+                    },
+                    'images-0-image': { //  Adjust this to match your formset's prefix, and image field name
+                        required: true, //  Require at least one image
+                        // accept: "image/*",  // Only allow images
+                    },
+
+                },
+                messages: {
+                    'title': {
+                        required: "Please enter the product title",
+                        maxlength: "Title cannot exceed 255 characters"
+                    },
+                    'description': {
+                        required: "Please enter the product description",
+                        maxlength: "Description cannot exceed 1000 characters"
+                    },
+                    'price': {
+                        required: "Please enter the price",
+                        number: "Please enter a valid number",
+                        min: "Price must be greater than or equal to 0"
+                    },
+                    'category': {
+                        required: "Please select a category",
+                    },
+                     'status': {
+                        required: "Please select a status",
+                    },
+                    'images-0-image': {
+                        required: "Please upload at least one image",
+                        accept: "Please upload a valid image file",
+                    }
+                },
+                errorPlacement: function(error, element) {
+                    //  Basic error placement:
+                    error.insertAfter(element);
+                },
+                submitHandler: function(form) {
+                    //  This function will be called when the form is valid
+                    var formData = new FormData(form);
+
+                    $.ajax({
+                        url: form.action,  // Or you can specify a specific URL
+                        type: 'POST',
+                        data: formData,
+                        processData: false, //  Important: Don't process the data
+                        contentType: false, //  Important: Set content type to false
+                        success: function(response) {
+                            //  Handle success (e.g., redirect, show message)
+                            console.log(response);
+                            window.location.href = response.redirect; //hardcoded
+                            //  You might want to show a success message to the user here
+                        },
+                        error: function(xhr, status, error) {
+                            //  Handle error (e.g., display error message)
+                            console.error(xhr, status, error);
+                            $('#form-errors').text('An error occurred: ' + xhr.responseText).show();
+                        }
+                    });
+                }
+            });
+        });
+    </script>
     {% endblock %}
