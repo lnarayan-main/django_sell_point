@@ -13,3 +13,8 @@ def register(request):
 
 def storeUser(request):
     print(request)
+
+
+@logged_in_required
+def user_profile_update(request):
+    return render(request, 'homepage/profile.html')

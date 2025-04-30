@@ -102,7 +102,7 @@
 
                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuLink">
                         <a class="dropdown-item" href="{% url 'user_products' %}">Product Management</a>
-                        <a class="dropdown-item" href="{% url 'home' %}">Profile Settings</a>
+                        <a class="dropdown-item" href="{% url 'user_profile_update' %}">Profile Settings</a>
                         <form action="{% url 'logout' %}" method="POST" class="dropdown-item ml-2 p-0">
                             {% csrf_token %}
                             <button type="submit" style="border:none; background:none; padding:8px 16px; width:100%; text-align:left;">Logout</button>
