@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Welcome to My Awesome Site!{% endblock %}
+
+{% block content %}
+
+    <!-- Contact Form Begin -->
+    <div class="contact-form spad">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="contact__form__title">
+                        <h2>Profile Update</h2>
+                    </div>
+                </div>
+            </div>
+            <form action="{% url 'user_profile_update' %}" method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <h3>General Information</h3>
+                <div class="row">
+                    <div class="col-lg-6 col-md-6">
+                        <input type="text" placeholder="First name" id="first_name" name="first_name" value="{{ request.user.first_name }}">
+                    </div>
+                    <div class="col-lg-6 col-md-6">
+                        <input type="text" placeholder="Last name" id="last_name" name="last_name" value="{{ request.user.last_name }}">
+                    </div>
+                    <div class="col-lg-6 col-md-6">
+                        <input type="text" placeholder="User Name" id="user_name" name="user_name" value="{{ request.user.username }}">
+                    </div>
+                    <div class="col-lg-6 col-md-6">
+                        <input type="text" placeholder="Email" id="email" name="email" readonly value="{{ request.user.email }}">
+                    </div>
+                    <div class="col-lg-6 col-md-6">
+                        <input type="tel" placeholder="Phone Number" id="phone_number" name="phone_number" value="{{ request.user.phone_number }}">
+                    </div>
+                    <div class="col-lg-6 col-md-6">
+                        <select id="gender" name="gender">
+                            <option value="" {% if not request.user.profile.gender %}selected{% endif %}>Gender</option>
+                            <option value="M" {% if request.user.profile.gender == 'M' %}selected{% endif %}>Male</option>
+                            <option value="F" {% if request.user.profile.gender == 'F' %}selected{% endif %}>Female</option>
+                            <option value="O" {% if request.user.profile.gender == 'O' %}selected{% endif %}>Others</option>
+                            <option value="N" {% if request.user.profile.gender == 'N' %}selected{% endif %}>Prefer Not to Say</option>
+                        </select>
+                    </div>
+                    <div class="col-lg-6 col-md-6">
+                            <input data-datepicker="" class="form-control" id="birthday" name="dob" type="text" placeholder="dd/mm/yyyy"
+                            value="{{ request.user.profile.dob|date:'d/m/Y' }}" required>                                             
+                    </div>
+                </div>
+                <h3>Location</h3>
+                <div class="row">
+                    <div class="col-lg-6 col-md-6">
+                        <input type="text" placeholder="Address" id="address" name="address" value="{{ request.user.profile.address }}">
+                    </div>
+                    <div class="col-lg-6 col-md-6">
+                        <input type="text" placeholder="Country" id="country" name="country" value="{{ request.user.profile.country }}">
+                    </div>
+                    <div class="col-lg-6 col-md-6">
+                        <input type="text" placeholder="State" id="state" name="state" value="{{ request.user.profile.state }}">
+                    </div>
+                    <div class="col-lg-6 col-md-6">
+                        <input type="text" placeholder="City" id="city" name="city" value="{{ request.user.profile.city }}">
+                    </div>
+                    <div class="col-lg-6 col-md-6">
+                        <input type="text" placeholder="Zipcode" id="zipcode" name="zipcode" value="{{ request.user.profile.zipcode }}">
+                    </div>
+                    <div class="col-lg-6 col-md-6">
+                        <input type="file" placeholder="Profile Pic" id="profile_pic" name="profile_pic">
+                        {% if request.user.profile.profile_pic %}
+                        <img src="{{ request.user.profile.profile_pic.url }}" alt="img" width="120" height="auto">
+                        {% endif %}
+                    </div>
+                    <div class="col-lg-12">
+                        <button type="submit" class="site-btn float-lg-right">Submit</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <!-- Contact Form End -->
+
+{% endblock %}

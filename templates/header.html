@@ -97,7 +97,11 @@
                 <div class="dropdown">
                     <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                       {% if request.user.profile.profile_pic %}
+                        <img src="{{ request.user.profile.profile_pic.url }}" alt="Profile" style="width:60px; height:60px; border-radius:50%;">
+                        {% else %}
                         <img src="{% static 'img/featured/feature-8.jpg' %}" alt="Profile" style="width:80px; height:80px; border-radius:50%;">
+                        {% endif %}
                     </a>
 
                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuLink">
