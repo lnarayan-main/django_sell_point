@@ -6,6 +6,7 @@ class Category(models.Model):
     name = models.CharField(max_length=255, unique=True, verbose_name="Category Name")
     parent = models.ForeignKey('self', null=True, blank=True, related_name='children', on_delete=models.SET_NULL, verbose_name="Parent Category")
     status = models.BooleanField(default=True, verbose_name="Status")
+    image = models.ImageField(upload_to='category_pics/', null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

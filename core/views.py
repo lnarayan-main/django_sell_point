@@ -160,7 +160,7 @@ def add_category(request):
 @user_passes_test(is_admin)
 def store_category(request):
     if request.method == 'POST':
-        form = CategoryForm(request.POST)
+        form = CategoryForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
             messages.success(request, 'Category created successfully!')
@@ -178,7 +178,7 @@ def store_category(request):
 def edit_category(request, pk):
     category = get_object_or_404(Category, pk=pk)  # Get the category or return a 404 error
     if request.method == 'POST':
-        form = CategoryForm(request.POST, instance=category)  # Populate the form with existing category data
+        form = CategoryForm(request.POST, request.FILES, instance=category)  # Populate the form with existing category data
         if form.is_valid():
             form.save()
             messages.success(request, 'Category updated successfully!')

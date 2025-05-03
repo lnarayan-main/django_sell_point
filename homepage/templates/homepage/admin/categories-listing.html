@@ -58,6 +58,7 @@
           <tr>
             <th>SN</th>
             <th>Category Name</th>
+            <th>Category Icon</th>
             <th>Parent Category</th>
             <th>Status</th>
             <!-- <th>Created At</th>
@@ -70,6 +71,11 @@
           <tr>
               <td>{{ forloop.counter }}</td>
               <td>{{ category.name }}</td>
+              {% if category.image.url %}
+              <td><img src="{{ category.image.url }}" alt="img" width="40" height="40" style="border-radius: 50%;"></td>
+              {% else %}
+              <td>N/A</td>
+              {% endif %}
               <td>
                   {% if category.parent %}
                       {{ category.parent.name }}

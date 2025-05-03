@@ -14,7 +14,8 @@ class CategoryForm(forms.ModelForm):
         initial=True,
         widget=forms.Select(choices=[(True, 'Active'), (False, 'Inactive')])
     )
+    image = forms.ImageField(required=False)
 
     class Meta:
         model = Category
-        fields = ['name', 'parent', 'status']
+        fields = ['name', 'parent', 'status', 'image']

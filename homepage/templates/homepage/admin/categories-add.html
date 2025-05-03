@@ -11,7 +11,7 @@
     <div class="col-12 col-xl-8">
         <div class="card card-body border-0 shadow mb-4">
             <h2 class="h5 mb-4">Create Category</h2>
-            <form method="POST" action="{% url 'store_category' %}">
+            <form method="POST" action="{% url 'store_category' %}" enctype="multipart/form-data">
                 {% csrf_token %}
                 <div class="row">
                     <div class="col-md-12 mb-3">
@@ -48,6 +48,15 @@
                                 <div class="error">{{ form.status.errors }}</div>
                             {% endif %}
                         </select>
+                    </div>
+                </div>
+                <div class="col-md-12 mb-3">
+                    <div>
+                        <label for="{{ form.image.id_for_label }}">Category Image</label>
+                        <input class="form-control" id="{{ form.image.id_for_label }}" type="file" placeholder="Enter category name" name="image" required>
+                        {% if form.image.errors %}
+                            <div class="error">{{ form.image.errors }}</div>
+                        {% endif %}
                     </div>
                 </div>
                 <div class="mt-3">
