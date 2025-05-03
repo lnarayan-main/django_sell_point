@@ -32,7 +32,7 @@
                         <input type="text" placeholder="Email" id="email" name="email" readonly value="{{ request.user.email }}">
                     </div>
                     <div class="col-lg-6 col-md-6">
-                        <input type="tel" placeholder="Phone Number" id="phone_number" name="phone_number" value="{{ request.user.phone_number }}">
+                        <input type="number" placeholder="Phone Number" id="phone_number" name="phone_number" value="{{ request.user.profile.phone_number }}">
                     </div>
                     <div class="col-lg-6 col-md-6">
                         <select id="gender" name="gender">

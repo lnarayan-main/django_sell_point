@@ -15,3 +15,13 @@ def storeUser(request):
     print(request)
 
 
+def shop_grid(request):
+    return render(request, 'homepage/home/shop-grid.html')
+
+def blog(request):
+    return render(request, 'homepage/home/blog.html')
+
+def contact(request):
+    return render(request, 'homepage/home/contact.html')
+
+
