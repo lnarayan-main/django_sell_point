@@ -5,3 +5,12 @@
     height: 110px !important;
     object-fit: cover;
 }
+
+.featured__item__pic__hover li:hover a.favorited {
+	background: yellow !important;
+	border-color: yellow !important;
+}
+
+.featured__item__pic__hover a.favorited i {
+	color: red !important;
+}

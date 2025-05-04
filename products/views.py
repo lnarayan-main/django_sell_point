@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.forms import inlineformset_factory
-from .models import Product, ProductImage
+from .models import Favorite, Product, ProductImage
 from .forms import ProductForm, ProductImageFormSet
 from django.http import JsonResponse
 from django.urls import reverse
@@ -161,4 +161,33 @@ def product_delete(request, slug):
         return redirect('user_products')
     return render(request, 'products/product_confirm_delete.html', {'product': product})
 
-# ... (update and delete views for Category can be added similarly)
+
+@login_required
+def toggle_favorite(request):
+    product_id = request.POST.get('product_id')
+    user = request.user
+
+    try:
+        product = Product.objects.get(id=product_id)
+    except Product.DoesNotExist:
+        return JsonResponse({'status': 'error', 'message': 'Product not found'}, status=404)
+
+    favorite, created = Favorite.objects.get_or_create(user=user, product=product)
+
+    if not created:
+        favorite.delete()
+        count = Favorite.objects.filter(user=user).count()
+        return JsonResponse({
+            "status": "success",
+            "message": "Removed from favorites",
+            "is_favorited": False,
+            "favorite_count": count
+        })
+    else:
+        count = Favorite.objects.filter(user=user).count()
+        return JsonResponse({
+            "status": "success",
+            "message": "Added to favorites",
+            "is_favorited": True,
+            "favorite_count": count
+        })

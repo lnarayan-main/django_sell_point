@@ -133,7 +133,7 @@
                     <div class="featured__item">
                         <div class="featured__item__pic set-bg" data-setbg="{{ product.images.first.image.url }}">
                             <ul class="featured__item__pic__hover">
-                                <li><a href="#"><i class="fa fa-heart"></i></a></li>
+                                <li><a href="#" data-id="{{ product.id }}" class="add-to-favorite {% if product.is_favorited %}favorited{% endif %}"><i class="fa fa-heart"></i></a></li>
                                 <li><a href="#"><i class="fa fa-retweet"></i></a></li>
                                 <li><a href="#"><i class="fa fa-shopping-cart"></i></a></li>
                             </ul>
@@ -415,4 +415,37 @@
         </div>
     </section>
     <!-- Blog Section End -->
+    {% endblock %}
+
+    {% block extra_scripts %}
+    <script>
+        $(document).ready(function(){
+            $('.add-to-favorite').click(function (e) {
+                e.preventDefault();
+                const productId = $(this).data('id');
+                var btn = $(this);
+
+                ajaxCall({
+                    url: "{% url 'toggle_favorite' %}",
+                    method: 'POST',
+                    data: { product_id: productId },
+                    successCallback: function (res) {
+                        console.log('Add to favorite success');
+                        $(".favorite-count").text(res.favorite_count);
+                        if (res.is_favorited) {
+                            btn.addClass('favorited');
+                        } else {
+                            btn.removeClass('favorited');
+                        }
+                    },
+                    errorCallback: function (err) {
+                        // Handle error
+                        console.warn('Error adding to cart', err);
+                    }
+                });
+            });
+
+            
+        });
+    </script>
     {% endblock %}

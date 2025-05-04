@@ -29,6 +29,9 @@
     
     <link rel="stylesheet" href="{% static 'css/style.css' %}"> 
     <link rel="stylesheet" href="{% static 'custom/css/style.css' %}" type="text/css">
+    <!-- iziToast CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/izitoast/dist/css/iziToast.min.css">
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" rel="stylesheet">
     {% block extra_head %}{% endblock %}
 </head>
@@ -112,9 +115,12 @@
      <script src="{% static 'js/mixitup.min.js' %}"></script>
      <script src="{% static 'js/owl.carousel.min.js' %}"></script>
      <script src="{% static 'js/main.js' %}"></script>
-    
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.min.js"></script>
+     
+     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.min.js"></script>
+     <!-- iziToast JS -->
+     <script src="https://cdn.jsdelivr.net/npm/izitoast/dist/js/iziToast.min.js"></script>
+     <script src="{% static 'custom/js/common.js' %}"></script>
     {% block extra_scripts %}{% endblock %}
 
 </body>
