@@ -1,0 +1,7 @@
+.review-products img,
+.rated-products img,
+.latest-products img {
+    width: 110px !important;
+    height: 110px !important;
+    object-fit: cover;
+}
