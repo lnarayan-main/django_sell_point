@@ -51,3 +51,7 @@ class CartItem(models.Model):
 
     class Meta:
         unique_together = ('user', 'product')
+
+    @property
+    def total_price(self):
+        return self.product.price * self.quantity

@@ -60,7 +60,8 @@ def contact(request):
 def shoppingCart(request):
     cart_items = CartItem.objects.select_related('product').filter(user=request.user)
     total_items = cart_items.count()
-    total_price = sum(item.product.price * item.quantity for item in cart_items)
+    print(cart_items)
+    total_price = sum(item.total_price for item in cart_items)
 
     context = {
         'cart_items': cart_items,
