@@ -135,7 +135,7 @@
                             <ul class="featured__item__pic__hover">
                                 <li><a href="#" data-id="{{ product.id }}" class="add-to-favorite {% if product.is_favorited %}favorited{% endif %}"><i class="fa fa-heart"></i></a></li>
                                 <li><a href="#"><i class="fa fa-retweet"></i></a></li>
-                                <li><a href="#"><i class="fa fa-shopping-cart"></i></a></li>
+                                <li><a href="#" data-id="{{ product.id }}" class="add-to-cart {% if product.is_carted %}carted{% endif %}"><i class="fa fa-shopping-cart"></i></a></li>
                             </ul>
                         </div>
                         <div class="featured__item__text">
@@ -436,6 +436,32 @@
                             btn.addClass('favorited');
                         } else {
                             btn.removeClass('favorited');
+                        }
+                    },
+                    errorCallback: function (err) {
+                        // Handle error
+                        console.warn('Error adding to favorite', err);
+                    }
+                });
+            });
+
+            // add to cartItem
+            $('.add-to-cart').click(function (e) {
+                e.preventDefault();
+                const productId = $(this).data('id');
+                var btn = $(this);
+
+                ajaxCall({
+                    url: "{% url 'add_to_cart' %}",
+                    method: 'POST',
+                    data: { product_id: productId },
+                    successCallback: function (res) {
+                        console.log('Add to cart success');
+                        $(".cart-count").text(res.cart_count);
+                        if (res.is_carted) {
+                            btn.addClass('carted');
+                        } else {
+                            btn.removeClass('carted');
                         }
                     },
                     errorCallback: function (err) {

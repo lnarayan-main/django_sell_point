@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.forms import inlineformset_factory
-from .models import Favorite, Product, ProductImage
+from .models import Favorite, Product, ProductImage, CartItem
 from .forms import ProductForm, ProductImageFormSet
 from django.http import JsonResponse
 from django.urls import reverse
@@ -191,3 +191,35 @@ def toggle_favorite(request):
             "is_favorited": True,
             "favorite_count": count
         })
+
+
+@login_required
+def add_to_cart(request):
+    product_id = request.POST.get('product_id')
+    quantity = int(request.POST.get('quantity', 1))  # Default quantity is 1
+    user = request.user
+
+    try:
+        product = Product.objects.get(id=product_id)
+    except Product.DoesNotExist:
+        return JsonResponse({'status': 'error', 'message': 'Product not found'}, status=404)
+
+    cart_item, created = CartItem.objects.get_or_create(user=user, product=product)
+
+    if not created:
+        cart_item.quantity += quantity
+        cart_item.save()
+        message = 'Cart updated successfully'
+    else:
+        cart_item.quantity = quantity
+        cart_item.save()
+        message = 'Product added to cart'
+
+    cart_count = CartItem.objects.filter(user=user).count()
+
+    return JsonResponse({
+        'status': 'success',
+        'message': message,
+        'cart_count': cart_count,
+        'is_carted': True,
+    })

@@ -14,3 +14,12 @@
 .featured__item__pic__hover a.favorited i {
 	color: red !important;
 }
+
+.featured__item__pic__hover li:hover a.carted {
+	background: yellow !important;
+	border-color: yellow !important;
+}
+
+.featured__item__pic__hover a.carted i {
+	color: red !important;
+}
