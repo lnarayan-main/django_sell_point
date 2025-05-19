@@ -226,4 +226,5 @@ def add_to_cart(request):
 
 def product_detail_page(request, pk):
     product = get_object_or_404(Product, pk=pk)
-    return render(request, 'homepage/home/product-details.html', {'product': product})
+    related_products = Product.objects.filter(category=product.category).exclude(pk=pk)[:4]  # Fetch up to 4 related products
+    return render(request, 'homepage/home/product-details.html', {'product': product, 'related_products' : related_products})

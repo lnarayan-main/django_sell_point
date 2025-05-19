@@ -89,6 +89,7 @@ Awesome Site!{% endblock %} {% block content %}
             Order #{{ order.id }} - {{ order.created_at|date:"Y-m-d H:i" }}
           </h3>
           <p style="font-weight: bold; color: blue;"><strong style="color: red;">Total:</strong> ${{ order.total_amount }}</p>
+          <p style="color: black;"><strong>Address: </strong>{{ order.address }},{{ order.city }},{{ order.state }},{{ order.country }} {{ order.zipcode }}</p>
 
           <table border="1" cellpadding="10" cellspacing="0" width="100%">
             <tr>

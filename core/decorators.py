@@ -37,5 +37,6 @@ def logged_in_required(view_func):
             return view_func(request, *args, **kwargs)
         else:
             messages.error(request, "You need to be logged in to access this page.")
-            return redirect(reverse('login'))  # Adjust redirect URL as needed
+            return redirect('login')  # Adjust redirect URL as needed
+            # return redirect(reverse('login'))  # Adjust redirect URL as needed
     return _wrapped_view

@@ -177,7 +177,7 @@
                             <div class="latest-prdouct__slider__item">
                                 {% for product in group %}
                                 {% if product %}
-                                <a href="#" class="latest-product__item">
+                                <a href="{% url 'product_detail_page' product.id %}" class="latest-product__item">
                                     <div class="latest-product__item__pic latest-products">
                                         <img src="{{ product.images.first.image.url }}" alt="img">
                                     </div>
@@ -201,7 +201,7 @@
                             <div class="latest-prdouct__slider__item">
                                 {% for product in group %}
                                 {% if product %}
-                                <a href="#" class="latest-product__item">
+                                <a href="{% url 'product_detail_page' product.id %}" class="latest-product__item">
                                     <div class="latest-product__item__pic rated-products">
                                         <img src="{{ product.images.first.image.url }}" alt="img">
                                     </div>
@@ -225,7 +225,7 @@
                             <div class="latest-prdouct__slider__item">
                                 {% for product in group %}
                                 {% if product %}
-                                <a href="#" class="latest-product__item">
+                                <a href="{% url 'product_detail_page' product.id %}" class="latest-product__item">
                                     <div class="latest-product__item__pic review-products">
                                         <img src="{{ product.images.first.image.url }}" alt="img">
                                     </div>

@@ -51,9 +51,9 @@ def order_success(request):
     cart_items.delete()
     orders = Order.objects.filter(user=request.user).prefetch_related('items__product').order_by('-created_at')
 
-    return render(request, 'homepage/home/order_success.html', {'orders': orders})
+    return render(request, 'homepage/home/my-orders.html', {'orders': orders})
 
 
 def my_orders(request):
     orders = Order.objects.filter(user=request.user).prefetch_related('items__product').order_by('-created_at')
-    return render(request, 'homepage/home/order_success.html', {'orders': orders})
+    return render(request, 'homepage/home/my-orders.html', {'orders': orders})

@@ -8,6 +8,7 @@ from django.db.models import OuterRef, Exists, Value, BooleanField
 import stripe
 from sell_point import settings
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 
 def chunked(iterable, n):
     args = [iter(iterable)] * n
@@ -61,6 +62,7 @@ def contact(request):
     return render(request, 'homepage/home/contact.html')
 
 
+@logged_in_required
 def shoppingCart(request):
     cart_items = CartItem.objects.select_related('product').filter(user=request.user)
     total_items = cart_items.count()
