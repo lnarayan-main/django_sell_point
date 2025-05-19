@@ -22,9 +22,18 @@ function hideLoader() {
 }
 
 // ======= iziToast Notification Handler =========
+// function showToast(type, message) {
+//     iziToast[type]({
+//         title: type === 'success' ? 'Success' : 'Error',
+//         message: message,
+//         position: 'topRight',
+//         timeout: 3000
+//     });
+// }
+
 function showToast(type, message) {
     iziToast[type]({
-        title: type === 'success' ? 'Success' : 'Error',
+        title: type === 'success' ? 'Success' : type === 'warning' ? 'Warning' : 'Error',
         message: message,
         position: 'topRight',
         timeout: 3000

@@ -1,24 +1,37 @@
-# Python
+# Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
-*.sqlite3
-*.log
-
-# Django
-db.sqlite3
 *.pyc
 
-# Environment
+# SQLite database
+*.sqlite3
+db.sqlite3
+
+# Logs
+*.log
+
+# Python virtual environment
 venv/
+ENV/
+env/
+
+# Environment variables
 .env
 
-# VSCode
+# Django static and media
+/staticfiles/
+/media/
+
+# VS Code settings
 .vscode/
 
-# OS files
+# macOS / Windows system files
 .DS_Store
 Thumbs.db
 
-# Static & media if collected/generated
-/staticfiles/
-/media/
+# Migrations (optional - if you regenerate them often)
+# ** Only add this if you're sure your team regenerates migrations
+# */migrations/__pycache__/
+# */migrations/*.pyc
+# */migrations/*.pyo
+# */migrations/*.py~

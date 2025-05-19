@@ -223,3 +223,7 @@ def add_to_cart(request):
         'cart_count': cart_count,
         'is_carted': True,
     })
+
+def product_detail_page(request, pk):
+    product = get_object_or_404(Product, pk=pk)
+    return render(request, 'homepage/home/product-details.html', {'product': product})

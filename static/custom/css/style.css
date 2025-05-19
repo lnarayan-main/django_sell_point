@@ -1,25 +1,65 @@
 .review-products img,
 .rated-products img,
 .latest-products img {
-    width: 110px !important;
-    height: 110px !important;
-    object-fit: cover;
+  width: 110px !important;
+  height: 110px !important;
+  object-fit: cover;
 }
 
 .featured__item__pic__hover li:hover a.favorited {
-	background: yellow !important;
-	border-color: yellow !important;
+  background: yellow !important;
+  border-color: yellow !important;
 }
 
 .featured__item__pic__hover a.favorited i {
-	color: red !important;
+  color: red !important;
 }
 
 .featured__item__pic__hover li:hover a.carted {
-	background: yellow !important;
-	border-color: yellow !important;
+  background: yellow !important;
+  border-color: yellow !important;
 }
 
 .featured__item__pic__hover a.carted i {
-	color: red !important;
+  color: red !important;
+}
+
+#payment-form {
+  max-width: 400px;
+}
+
+.form-row {
+  margin-bottom: 15px;
+}
+
+.form-row label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: 500;
+}
+
+.StripeElement,
+input[type="text"] {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  width: 100%;
+  background-color: white;
+}
+
+/* Layout 2 elements in a row */
+.form-row-half {
+  width: 48%;
+  float: left;
+  margin-right: 4%;
+}
+
+.form-row-half:last-child {
+  margin-right: 0;
+}
+
+.clearfix::after {
+  content: "";
+  display: table;
+  clear: both;
 }

@@ -1,0 +1,189 @@
+{% extends 'base.html' %} {% load static %} {% block title %}Welcome to My
+Awesome Site!{% endblock %} {% block content %}
+
+<!-- Hero Section Begin -->
+<section class="hero hero-normal">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-3">
+        <div class="hero__categories">
+          <div class="hero__categories__all">
+            <i class="fa fa-bars"></i>
+            <span>All departments</span>
+          </div>
+          <ul>
+            <li><a href="#">Fresh Meat</a></li>
+            <li><a href="#">Vegetables</a></li>
+            <li><a href="#">Fruit & Nut Gifts</a></li>
+            <li><a href="#">Fresh Berries</a></li>
+            <li><a href="#">Ocean Foods</a></li>
+            <li><a href="#">Butter & Eggs</a></li>
+            <li><a href="#">Fastfood</a></li>
+            <li><a href="#">Fresh Onion</a></li>
+            <li><a href="#">Papayaya & Crisps</a></li>
+            <li><a href="#">Oatmeal</a></li>
+            <li><a href="#">Fresh Bananas</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="col-lg-9">
+        <div class="hero__search">
+          <div class="hero__search__form">
+            <form action="#">
+              <div class="hero__search__categories">
+                All Categories
+                <span class="arrow_carrot-down"></span>
+              </div>
+              <input type="text" placeholder="What do yo u need?" />
+              <button type="submit" class="site-btn">SEARCH</button>
+            </form>
+          </div>
+          <div class="hero__search__phone">
+            <div class="hero__search__phone__icon">
+              <i class="fa fa-phone"></i>
+            </div>
+            <div class="hero__search__phone__text">
+              <h5>+65 11.188.888</h5>
+              <span>support 24/7 time</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- Hero Section End -->
+
+<!-- Breadcrumb Section Begin -->
+<section
+  class="breadcrumb-section set-bg"
+  data-setbg="{% static 'img/breadcrumb.jpg' %}"
+>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12 text-center">
+        <div class="breadcrumb__text">
+          <h2>Checkout</h2>
+          <div class="breadcrumb__option">
+            <a href="./index.html">Home</a>
+            <span>Checkout</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- Breadcrumb Section End -->
+
+<!-- Checkout Section Begin -->
+<section class="checkout spad">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <h6>
+          <span class="icon_tag_alt"></span> Have a coupon?
+          <a href="#">Click here</a> to enter your code
+        </h6>
+      </div>
+    </div>
+    <div class="checkout__form">
+      <form id="payment-form">
+        <div class="form-row">
+          <label for="card-number">Card Number</label>
+          <div id="card-number" class="StripeElement"></div>
+        </div>
+
+        <div class="form-row">
+          <label for="card-expiry">Expiry Date</label>
+          <div id="card-expiry" class="StripeElement"></div>
+        </div>
+
+        <div class="form-row">
+          <label for="card-cvc">CVC</label>
+          <div id="card-cvc" class="StripeElement"></div>
+        </div>
+
+        <div class="form-row">
+          <label for="zip">ZIP Code</label>
+          <input type="text" id="zip" name="zip" placeholder="ZIP Code" />
+        </div>
+
+        <div
+          id="card-errors"
+          role="alert"
+          style="color: red; margin-top: 10px"
+        ></div>
+
+        <button id="submit-button" type="submit">Place Order</button>
+      </form>
+    </div>
+  </div>
+</section>
+<!-- Checkout Section End -->
+
+{% endblock %} {% block extra_scripts %}
+
+<script src="https://js.stripe.com/v3/"></script>
+<script>
+  const stripe = Stripe("{{ stripe_public_key }}");
+  const elements = stripe.elements();
+
+  const style = {
+    base: {
+      fontSize: "16px",
+      color: "#32325d",
+      "::placeholder": {
+        color: "#a0aec0",
+      },
+    },
+  };
+
+  const cardNumber = elements.create("cardNumber", { style });
+  const cardExpiry = elements.create("cardExpiry", { style });
+  const cardCvc = elements.create("cardCvc", { style });
+
+  cardNumber.mount("#card-number");
+  cardExpiry.mount("#card-expiry");
+  cardCvc.mount("#card-cvc");
+
+  // Handle real-time validation errors
+  [cardNumber, cardExpiry, cardCvc].forEach((element) => {
+    element.on("change", (event) => {
+      const displayError = document.getElementById("card-errors");
+      displayError.textContent = event.error ? event.error.message : "";
+    });
+  });
+
+  document
+    .getElementById("submit-button")
+    .addEventListener("click", function (e) {
+      e.preventDefault();
+
+      stripe
+        .confirmCardPayment("{{ client_secret }}", {
+          payment_method: {
+            card: cardNumber,
+            billing_details: {
+              name: "{{ request.user.get_full_name }}",
+              email: "{{ request.user.email }}",
+              address: {
+                postal_code: document.getElementById("zip").value,
+              },
+            },
+          },
+        })
+        .then(function (result) {
+          if (result.error) {
+            document.getElementById("card-errors").textContent =
+              result.error.message;
+          } else {
+            if (result.paymentIntent.status === "succeeded") {
+              window.location.href = "{% url 'order_success' %}?payment_intent=" + result.paymentIntent.id;
+           
+            }
+          }
+        });
+    });
+</script>
+
+{% endblock %}
