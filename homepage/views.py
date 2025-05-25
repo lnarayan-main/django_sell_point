@@ -213,6 +213,7 @@ def get_messages(request):
     return JsonResponse({
         'messages': [
             {
+                "id": msg.id, 
                 'sender': msg.sender.username,
                 'message': msg.message,
                 'timestamp': msg.timestamp.strftime('%Y-%m-%d %H:%M')
@@ -240,3 +241,13 @@ def send_message(request):
         return JsonResponse({'status': 'Message sent'})
 
     return inner_send(request)
+
+@login_required
+def delete_message(request, message_id):
+    if request.method == 'DELETE':
+        try:
+            msg = ChatMessage.objects.get(id=message_id, sender=request.user)
+            msg.delete()
+            return JsonResponse({'status': 'deleted'})
+        except ChatMessage.DoesNotExist:
+            return JsonResponse({'error': 'Message not found or unauthorized'}, status=403)
