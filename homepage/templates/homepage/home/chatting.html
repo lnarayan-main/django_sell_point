@@ -1,0 +1,213 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_head %}
+<style>
+    .chat-container {
+        display: flex;
+        height: 80vh;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        overflow: hidden;
+    }
+
+    .user-list {
+        width: 25%;
+        background-color: #f8f8f8;
+        border-right: 1px solid #ddd;
+        overflow-y: auto;
+    }
+
+    .user-list h4 {
+        padding: 10px;
+        border-bottom: 1px solid #ccc;
+    }
+
+    .user-item {
+        padding: 10px;
+        cursor: pointer;
+        border-bottom: 1px solid #eaeaea;
+    }
+
+    .user-item:hover,
+    .user-item.active {
+        background-color: #e2f0ff;
+        font-weight: bold;
+    }
+
+    .chat-window {
+        width: 75%;
+        display: flex;
+        flex-direction: column;
+        background-color: #fff;
+    }
+
+    .chat-header {
+        padding: 15px;
+        background-color: #f1f1f1;
+        font-weight: bold;
+        border-bottom: 1px solid #ddd;
+    }
+
+    .chat-messages {
+        flex: 1;
+        padding: 15px;
+        overflow-y: auto;
+        background-color: #fefefe;
+    }
+
+    .message {
+        margin-bottom: 12px;
+        max-width: 60%;
+        padding: 10px 15px;
+        border-radius: 20px;
+        position: relative;
+        clear: both;
+        word-break: break-word;
+    }
+
+    .sent {
+        background-color: #dcf8c6;
+        align-self: flex-end;
+        float: right;
+        border-bottom-right-radius: 0;
+    }
+
+    .received {
+        background-color: #e8e8e8;
+        align-self: flex-start;
+        float: left;
+        border-bottom-left-radius: 0;
+    }
+
+    .chat-input {
+        display: flex;
+        padding: 10px;
+        border-top: 1px solid #ddd;
+        background-color: #fff;
+    }
+
+    .chat-input input {
+        flex: 1;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 20px;
+    }
+
+    .chat-input button {
+        margin-left: 10px;
+        padding: 8px 20px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 20px;
+    }
+</style>
+
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="chat-container shadow-sm">
+        <!-- Users List -->
+        <div class="user-list">
+            <h4>Chats</h4>
+            {% for user in users %}
+            <div class="user-item" data-id="{{ user.id }}" data-username="{{ user.username }}"
+                data-pic="{% if user.profile.profile_pic %}{{ user.profile.profile_pic.url }}{% else %}{% static 'custom/images/default-profile.avif' %}{% endif %}">
+                <img src="{% if user.profile.profile_pic %}{{ user.profile.profile_pic.url }}{% else %}{% static 'custom/images/default-profile.avif' %}{% endif %}"
+                    alt="Profile" style="width:40px; height:40px; border-radius:50%; margin-right:10px;">
+                {{ user.username }}
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Chat Panel -->
+        <div class="chat-window">
+            <div class="chat-header d-flex align-items-center" id="chat-with">
+                <img id="chat-user-pic" src="" alt="Profile" style="width:40px; height:40px; border-radius:50%; margin-right:10px; display:none;">
+                <span id="chat-username">Select a user</span>
+            </div>
+            
+            <div class="chat-messages" id="chat-messages"></div>
+            <div class="chat-input">
+                <input type="text" id="chat-input" placeholder="Write a message...">
+                <button id="send-btn">Send</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    let selectedUserId = null;
+    let currentUser = "{{ request.user.username }}";
+
+    document.querySelectorAll('.user-item').forEach(item => {
+        item.addEventListener('click', function () {
+            // Highlight selected user
+            document.querySelectorAll('.user-item').forEach(el => el.classList.remove('active'));
+            this.classList.add('active');
+
+            // Update selected user
+            selectedUserId = this.dataset.id;
+
+            // ✅ Update Chat Header (username & profile pic)
+            const username = this.dataset.username;
+            const profilePic = this.dataset.pic;
+
+            document.getElementById('chat-username').textContent = username;
+            const imgEl = document.getElementById('chat-user-pic');
+            imgEl.src = profilePic;
+            imgEl.style.display = 'inline';
+
+            // Load messages
+            fetchMessages();
+        });
+    });
+
+    function fetchMessages() {
+        fetch(`/chat/messages/?user_id=${selectedUserId}`)
+            .then(res => res.json())
+            .then(data => {
+                const box = document.getElementById('chat-messages');
+                box.innerHTML = '';
+                data.messages.forEach(msg => {
+                    const div = document.createElement('div');
+                    div.classList.add('message');
+                    div.classList.add(msg.sender === currentUser ? 'sent' : 'received');
+                    div.innerHTML = `<strong>${msg.sender}</strong><br>${msg.message}<br><small>${msg.timestamp}</small>`;
+                    box.appendChild(div);
+                });
+                box.scrollTop = box.scrollHeight;
+            });
+    }
+
+    document.getElementById('send-btn').addEventListener('click', function () {
+        const input = document.getElementById('chat-input');
+        if (!input.value || !selectedUserId) return;
+
+        fetch('/chat/send/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: JSON.stringify({
+                receiver_id: selectedUserId,
+                message: input.value
+            })
+        }).then(() => {
+            input.value = '';
+            fetchMessages();
+        });
+    });
+
+    setInterval(() => {
+        if (selectedUserId) fetchMessages();
+    }, 3000);
+</script>
+
+{% endblock %}

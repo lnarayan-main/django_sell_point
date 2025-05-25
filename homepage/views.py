@@ -1,5 +1,5 @@
 from django.http import JsonResponse
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect, render, get_object_or_404
 from core.decorators import admin_required, logged_in_required
 from homepage.models import Category
 from products.models import Favorite, Product, CartItem
@@ -9,6 +9,8 @@ import stripe
 from sell_point import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from .models import ChatMessage
+from django.contrib.auth.models import User
 
 def chunked(iterable, n):
     args = [iter(iterable)] * n
@@ -193,3 +195,48 @@ def place_order(request):
         return render(request, 'error.html', {'message': 'Invalid request method.'})
     
 
+@login_required
+def chat_home(request):
+    users = User.objects.exclude(id=request.user.id)
+    return render(request, 'homepage/home/chatting.html', {'users': users})
+
+@login_required
+def get_messages(request):
+    user_id = request.GET.get('user_id')
+    other_user = get_object_or_404(User, id=user_id)
+
+    messages = ChatMessage.objects.filter(
+        sender__in=[request.user, other_user],
+        receiver__in=[request.user, other_user]
+    ).order_by('timestamp')
+
+    return JsonResponse({
+        'messages': [
+            {
+                'sender': msg.sender.username,
+                'message': msg.message,
+                'timestamp': msg.timestamp.strftime('%Y-%m-%d %H:%M')
+            }
+            for msg in messages
+        ]
+    })
+
+@login_required
+def send_message(request):
+    from django.views.decorators.csrf import csrf_exempt
+    import json
+    from django.utils.timezone import now
+
+    @csrf_exempt
+    def inner_send(request):
+        data = json.loads(request.body)
+        receiver = get_object_or_404(User, id=data['receiver_id'])
+        ChatMessage.objects.create(
+            sender=request.user,
+            receiver=receiver,
+            message=data['message'],
+            timestamp=now()
+        )
+        return JsonResponse({'status': 'Message sent'})
+
+    return inner_send(request)

@@ -11,5 +11,8 @@ urlpatterns = [
     path('remove-from-cart/', views.remove_from_cart, name='remove_from_cart'),
     path('checkout/', views.checkout_view, name='checkout'),
     path('place-order/', views.place_order, name='place-order'),
+    path('chat/', views.chat_home, name='chat_home'),
+    path('chat/messages/', views.get_messages, name='get_messages'),
+    path('chat/send/', views.send_message, name='send_message'),
 
 ]

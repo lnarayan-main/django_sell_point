@@ -122,6 +122,38 @@
      <script src="https://cdn.jsdelivr.net/npm/izitoast/dist/js/iziToast.min.js"></script>
      <script src="{% static 'custom/js/common.js' %}"></script>
      <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+     <!-- **************** -->
+     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js"></script>
+     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database.js"></script>
+     <script>
+    //    const firebaseConfig = {
+    //      apiKey: "AIza...",
+    //      authDomain: "yourapp.firebaseapp.com",
+    //      databaseURL: "https://yourapp.firebaseio.com",
+    //      projectId: "yourapp",
+    //      storageBucket: "yourapp.appspot.com",
+    //      messagingSenderId: "1234567890",
+    //      appId: "1:1234567890:web:abcdef123456"
+    //    };
+
+       const firebaseConfig = {
+        apiKey: "AIzaSyB8af7-5VYPedez9V3TuyLez65OQ-w9VrA",
+        authDomain: "sell-point-django.firebaseapp.com",
+        databaseURL: "https://sell-point-django-default-rtdb.firebaseio.com/",
+        projectId: "sell-point-django",
+        storageBucket: "sell-point-django.firebasestorage.app",
+        messagingSenderId: "13672310178",
+        appId: "1:13672310178:web:fdddedee3c6bf9aa5a3efb",
+        measurementId: "G-ZNSJ51YGMG"
+        };
+            
+       firebase.initializeApp(firebaseConfig);
+       const db = firebase.database();  // Or firebase.firestore() for Firestore
+     </script>
+     
+     <!-- **************** -->
+
     {% block extra_scripts %}{% endblock %}
     {% if messages %}
     <script>

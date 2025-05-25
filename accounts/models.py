@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.templatetags.static import static 
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
@@ -25,6 +26,13 @@ class UserProfile(models.Model):
 
     def __str__(self):
         return self.user.username
+    
+    @property
+    def profile_pic_url(self):
+        if self.profile_pic and hasattr(self.profile_pic, 'url'):
+            return self.profile_pic.url
+        # Use static to get the URL for your default image
+        return static('img/featured/feature-8.jpg')
 
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):
